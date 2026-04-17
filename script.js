@@ -88,8 +88,13 @@ function initScrollReveal() {
                         char.classList.add('visible');
                     }, index * 10); // Tốc độ gõ 10ms mỗi chữ cái
                 });
-
-                observer.unobserve(entry.target);
+            } else {
+                // Khi ra khỏi màn hình, gỡ active để có thể load lại, và reset hiệu ứng gõ chữ
+                entry.target.classList.remove('active');
+                const visibleChars = entry.target.querySelectorAll('.type-char.visible');
+                visibleChars.forEach(char => {
+                    char.classList.remove('visible');
+                });
             }
         });
     }, {
