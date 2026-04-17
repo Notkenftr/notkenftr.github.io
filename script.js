@@ -146,3 +146,11 @@ document.addEventListener('DOMContentLoaded', () => {
         isPlaying = !isPlaying;
     });
 });
+
+// --- Mouse Glow Effect ---
+document.addEventListener('mousemove', (e) => {
+    const glow = document.querySelector('.mouse-glow');
+    if (glow) {
+        glow.style.transform = `translate(${e.clientX - 300}px, ${e.clientY - 300}px)`;
+    }
+});
