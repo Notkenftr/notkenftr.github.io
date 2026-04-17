@@ -15,8 +15,18 @@ window.addEventListener('load', () => {
             initScrollReveal();
 
             // Đảm bảo chữ ở các thẻ không nằm trong scroll reveal hiện gõ chữ (eg. header)
-            const headerChars = document.querySelectorAll('.glass-header .type-char');
-            headerChars.forEach((char, index) => {
+            const headerBaseChars = document.querySelectorAll('.glass-header h1 .type-char, .glass-header .subtitle .type-char');
+            headerBaseChars.forEach((char, index) => {
+                setTimeout(() => char.classList.add('visible'), index * 10);
+            });
+
+            const headerMetaChars = document.querySelectorAll('.glass-header .meta-info .type-char');
+            headerMetaChars.forEach((char, index) => {
+                setTimeout(() => char.classList.add('visible'), index * 10);
+            });
+
+            const headerLinkChars = document.querySelectorAll('.glass-header .profile-links .type-char');
+            headerLinkChars.forEach((char, index) => {
                 setTimeout(() => char.classList.add('visible'), index * 10);
             });
 
