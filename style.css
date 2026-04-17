@@ -385,3 +385,60 @@ body {
     .lang-card.active .circle-text { opacity: 1; transform: scale(1); }
     .lang-card.active .default-icon { opacity: 0; transform: scale(0.5); }
 }
+
+/* --- Typing Effect --- */
+.type-char {
+    opacity: 0;
+    transition: opacity 0.05s ease;
+}
+.type-char.visible {
+    opacity: 1;
+}
+
+/* --- Audio Control --- */
+.audio-control {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: rgba(15, 15, 25, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--card-border);
+    color: var(--text-muted);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+.audio-control:hover {
+    transform: translateY(-5px) scale(1.1);
+    color: var(--primary);
+    border-color: rgba(88, 101, 242, 0.5);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4), 0 0 15px rgba(88, 101, 242, 0.2);
+}
+.audio-control.playing {
+    color: var(--primary);
+    border-color: rgba(88, 101, 242, 0.3);
+}
+.audio-control.playing svg {
+    animation: musicPulse 2s infinite;
+}
+@keyframes musicPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); filter: drop-shadow(0 0 5px var(--primary)); }
+    100% { transform: scale(1); }
+}
+@media (max-width: 850px) {
+    .audio-control {
+        bottom: 20px;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+    }
+}
