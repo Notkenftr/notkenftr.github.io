@@ -8,8 +8,8 @@
     --bg-dark: #090912;
     --text-main: #ffffff;
     --text-muted: #a0a0b0;
-    --card-bg: rgba(255, 255, 255, 0.03);
-    --card-border: rgba(255, 255, 255, 0.08);
+    --card-bg: rgba(6, 6, 12, 0.3);
+    --card-border: rgba(255, 255, 255, 0.12);
     --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
@@ -24,6 +24,15 @@ body {
     overflow-x: hidden;
     min-height: 100vh;
     position: relative;
+}
+
+/* --- Background Canvas --- */
+#bg-canvas {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: -2;
+    pointer-events: none;
+}
 }
 
 body::before {
@@ -70,50 +79,51 @@ body::before {
 
 /* --- Blur Loading Overlay --- */
 #blur-overlay {
-    position: fixed; inset: 0; background: rgba(9, 9, 18, 0.6);
+    position: fixed; inset: 0; background: rgba(9, 9, 18, 0.4);
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    z-index: 9999; transition: opacity 0.8s ease, backdrop-filter 0.8s ease;
+    z-index: 9999; transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), backdrop-filter 1.2s ease, visibility 1.2s ease;
     display: flex; align-items: center; justify-content: center;
 }
 .spinner {
-    width: 50px; height: 50px;
-    border: 4px solid rgba(255, 255, 255, 0.1);
+    width: 40px; height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.05);
     border-top-color: var(--primary);
     border-right-color: var(--accent);
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    animation: spin 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
 }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
 /* --- Main Content --- */
 #content {
     display: none; padding: 60px 20px; max-width: 900px; margin: 0 auto;
-    opacity: 0; animation: slideDownFadeBlur 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0; animation: slideDownFadeBlur 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes slideDownFadeBlur {
-    0% { opacity: 0; transform: translateY(-40px) scale(0.98); filter: blur(10px); }
-    100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    0% { opacity: 0; transform: translateY(-30px); filter: blur(12px); }
+    100% { opacity: 1; transform: translateY(0); filter: blur(0); }
 }
 
 /* --- Hiệu ứng cuộn tới đâu hiện tới đó (Scroll Reveal) --- */
 .reveal-item {
     opacity: 0;
-    transform: translateY(60px) scale(0.95);
-    filter: blur(15px);
-    transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1), filter 1s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(40px);
+    filter: blur(8px);
+    will-change: opacity, transform, filter;
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .reveal-item.active {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
     filter: blur(0);
 }
 
 /* --- Glassmorphism Profile Header --- */
 .glass-header {
-    background: rgba(15, 15, 25, 0.4); backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px); border: 1px solid var(--card-border);
+    background: rgba(6, 6, 12, 0.3); backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px); border: 1px solid var(--card-border);
     border-radius: 24px; padding: 40px; margin-bottom: 50px;
     display: flex; align-items: center; gap: 30px; box-shadow: var(--glass-shadow);
 }
@@ -199,24 +209,28 @@ body::before {
 /* --- Project & Hobby Cards Grid --- */
 .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 60px; }
 .card {
-    background-color: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    background-color: var(--card-bg); backdrop-filter: blur(60px); -webkit-backdrop-filter: blur(60px);
     border: 1px solid var(--card-border); padding: 24px; border-radius: 16px;
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
     position: relative; overflow: hidden;
     display: block;
     text-decoration: none;
     color: inherit;
+    will-change: transform, box-shadow, border-color;
+    transform: translateZ(0);
+    transform-style: preserve-3d;
 }
 .card::before {
     content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); transition: 0.5s;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent); transition: 0.5s;
+    transform: translateZ(0);
 }
 .card:hover::before { left: 100%; }
-.card:hover { transform: translateY(-8px); border-color: rgba(88, 101, 242, 0.5); box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 20px rgba(88, 101, 242, 0.15); }
-.card h3 { margin: 0 0 12px 0; font-size: 1.4rem; font-weight: 700; padding-right: 20px; }
-.card p { margin: 0 0 20px 0; font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); }
-.tech-tags { display: flex; gap: 8px; flex-wrap: wrap; }
-.tag { background-color: rgba(88, 101, 242, 0.1); border: 1px solid rgba(88, 101, 242, 0.3); color: #dcdcdc; font-size: 0.8rem; padding: 4px 10px; border-radius: 6px; }
+.card:hover { border-color: rgba(88, 101, 242, 0.3); box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(88, 101, 242, 0.1); }
+.card h3 { margin: 0 0 12px 0; font-size: 1.4rem; font-weight: 700; padding-right: 20px; transform: translateZ(30px); }
+.card p { margin: 0 0 20px 0; font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); transform: translateZ(30px); }
+.tech-tags { display: flex; gap: 8px; flex-wrap: wrap; transform: translateZ(20px); }
+.tag { background-color: rgba(88, 101, 242, 0.1); border: 1px solid rgba(88, 101, 242, 0.2); color: #dcdcdc; font-size: 0.8rem; padding: 4px 10px; border-radius: 6px; }
 
 /* Icon mũi tên trong thẻ Card */
 .card-arrow {
@@ -227,15 +241,16 @@ body::before {
 
 /* --- Hobby Card --- */
 .hobby-card {
-    background-color: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    background-color: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--card-border); padding: 24px; border-radius: 16px;
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
     position: relative; overflow: hidden;
     display: block;
+    transform-style: preserve-3d;
 }
-.hobby-card:hover { transform: translateY(-8px); border-color: rgba(244, 127, 255, 0.5); box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 20px rgba(244, 127, 255, 0.15); }
-.hobby-card h3 { margin: 0 0 12px 0; font-size: 1.4rem; font-weight: 700; padding-right: 20px; }
-.hobby-card p { margin: 0 0 20px 0; font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); }
+.hobby-card:hover { border-color: rgba(244, 127, 255, 0.5); box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 20px rgba(244, 127, 255, 0.15); }
+.hobby-card h3 { margin: 0 0 12px 0; font-size: 1.4rem; font-weight: 700; padding-right: 20px; transform: translateZ(30px); }
+.hobby-card p { margin: 0 0 20px 0; font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); transform: translateZ(20px); }
 
 /* Thêm style cho ảnh trong thẻ Hobby */
 .hobby-img {
@@ -246,23 +261,26 @@ body::before {
     margin-bottom: 16px;
     border: 1px solid rgba(255,255,255,0.05);
     background-color: rgba(0,0,0,0.2);
+    transform: translateZ(40px);
 }
 
 /* --- Experience Tree Section --- */
 .experience-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 60px; }
 .exp-card {
-    background-color: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    background-color: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--card-border); padding: 24px; border-radius: 16px;
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
     position: relative; overflow: hidden; min-height: 200px;
+    transform-style: preserve-3d;
 }
 .exp-card::after {
     content: "HOVER TO EXPAND"; position: absolute; bottom: 24px; left: 24px;
     font-size: 0.75rem; letter-spacing: 2px; color: rgba(255,255,255,0.2); transition: opacity 0.3s ease;
+    transform: translateZ(10px);
 }
-.exp-card:hover { transform: translateY(-8px); border-color: rgba(255,255,255,0.3); box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 20px rgba(255,255,255,0.1); }
+.exp-card:hover { border-color: rgba(255,255,255,0.3); box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 20px rgba(255,255,255,0.1); }
 .exp-card:hover::after { opacity: 0; }
-.exp-card h3 { margin: 0 0 16px 0; font-size: 1.4rem; font-weight: 700; position: relative; z-index: 2; }
+.exp-card h3 { margin: 0 0 16px 0; font-size: 1.4rem; font-weight: 700; position: relative; z-index: 2; transform: translateZ(30px); }
 
 .exp-card.java h3 { color: var(--java-color); }
 .exp-card.python h3 { color: var(--primary); }
@@ -270,7 +288,7 @@ body::before {
 .exp-card.os h3 { color: var(--os-color); }
 .exp-card.other h3 { color: var(--accent); }
 
-.exp-tree { font-family: 'Consolas', 'Courier New', monospace; font-size: 0.95rem; line-height: 1.8; position: relative; z-index: 2; }
+.exp-tree { font-family: 'Consolas', 'Courier New', monospace; font-size: 0.95rem; line-height: 1.8; position: relative; z-index: 2; transform: translateZ(20px); }
 .tree-line {
     color: var(--text-muted); opacity: 0; transform: translateY(10px);
     transition: all 0.2s ease;
@@ -291,16 +309,17 @@ body::before {
 /* --- Circular Chart Section --- */
 .lang-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-bottom: 60px; }
 .lang-card {
-    background-color: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--card-border);
+    background-color: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--card-border);
     border-radius: 16px; padding: 30px 20px; text-align: center; box-shadow: var(--glass-shadow);
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
     cursor: default;
+    transform-style: preserve-3d;
 }
-.lang-card:hover { transform: translateY(-8px); border-color: var(--color); background-color: rgba(255,255,255,0.05); box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 20px var(--color); }
+.lang-card:hover { border-color: var(--color); background-color: rgba(255,255,255,0.05); box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 20px var(--color); }
 
 /* --- Education Progress --- */
 .edu-card {
-    background-color: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    background-color: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--card-border); padding: 40px 30px; border-radius: 16px;
     margin-bottom: 60px;
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
@@ -362,21 +381,23 @@ body::before {
 
 /* --- GitHub Streak --- */
 .github-streak-container {
-    background-color: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    background-color: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--card-border); padding: 24px; border-radius: 16px;
     margin-bottom: 60px; display: flex; justify-content: center; align-items: center;
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
+    transform-style: preserve-3d;
 }
 .github-streak-container:hover {
-    transform: translateY(-8px); border-color: rgba(255,255,255,0.3); box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 20px rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.3); box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 20px rgba(255,255,255,0.1);
 }
 .github-streak-img {
     max-width: 100%; height: auto; border-radius: 8px; filter: drop-shadow(0 0 10px rgba(0,0,0,0.3));
+    transform: translateZ(40px);
 }
 
 /* --- Discord Widget --- */
 .discord-widget-container {
-    background-color: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    background-color: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--card-border); padding: 24px; border-radius: 16px;
     margin-bottom: 60px; display: flex; justify-content: center;
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
@@ -388,8 +409,8 @@ body::before {
     max-width: 100%; border-radius: 8px;
 }
 
-.circle-container { position: relative; width: 120px; height: 120px; margin: 0 auto 20px; }
-.circle-container svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.circle-container { position: relative; width: 120px; height: 120px; margin: 0 auto 20px; transform: translateZ(40px); }
+.circle-container svg { width: 100%; height: 100%; transform: rotate(-90deg); filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); }
 .circle-bg { fill: none; stroke: rgba(255, 255, 255, 0.05); stroke-width: 8; }
 .circle-progress {
     fill: none; stroke: var(--color); stroke-width: 8; stroke-linecap: round;
@@ -415,6 +436,62 @@ body::before {
     .lang-card:hover .default-icon { opacity: 0; transform: scale(0.5); }
 }
 
+/* --- Line Stats Chart --- */
+.line-stats-card {
+    background-color: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--card-border); padding: 30px 40px; border-radius: 16px;
+    margin-bottom: 60px; box-shadow: var(--glass-shadow);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    will-change: transform, box-shadow;
+    transform: translateZ(0);
+    transform-style: preserve-3d;
+}
+.line-stats-card:hover {
+    border-color: rgba(255,255,255,0.3); box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 20px rgba(255,255,255,0.1);
+}
+
+.stat-line-wrapper {
+    margin-bottom: 15px;
+    transition: margin-bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: translateZ(30px);
+}
+.stat-line-wrapper:last-child { margin-bottom: 0; }
+
+.stat-line-info {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 1.05rem; font-weight: 700; color: var(--text-main);
+    opacity: 0; max-height: 0; margin-bottom: 0; overflow: hidden; transform: translateY(10px);
+    transition: max-height 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), margin-bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease, transform 0.4s ease;
+    will-change: max-height, opacity, transform, margin-bottom;
+}
+.stat-line-desc { font-size: 0.85rem; font-weight: 400; color: var(--text-muted); margin-left: 8px; }
+
+.stat-line-bg {
+    width: 100%; height: 12px; background: rgba(255,255,255,0.05); border-radius: 6px;
+    overflow: hidden;
+}
+.stat-line-fill {
+    height: 100%; background: var(--color); border-radius: 6px; width: 0;
+    transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+    box-shadow: 0 0 10px var(--color);
+    will-change: width;
+}
+.line-stats-card.active .stat-line-fill { width: var(--percent); }
+
+.hover-hint {
+    text-align: center; color: rgba(255,255,255,0.2); font-size: 0.8rem; letter-spacing: 2px;
+    margin-top: 10px; max-height: 20px; overflow: hidden;
+    transition: opacity 0.3s ease, max-height 0.3s ease, margin 0.3s ease; text-transform: uppercase;
+    transform: translateZ(10px);
+}
+
+@media (min-width: 851px) {
+    .line-stats-card:hover .stat-line-wrapper { margin-bottom: 25px; }
+    .line-stats-card:hover .stat-line-info { opacity: 1; max-height: 40px; margin-bottom: 8px; transform: translateY(0); }
+    .line-stats-card:hover .hover-hint { opacity: 0; max-height: 0; margin-top: 0; }
+}
+
 /* =========================================
    📱 MOBILE UI RESPONSIVE & LOGIC
    ========================================= */
@@ -438,6 +515,10 @@ body::before {
     .lang-card.active .circle-progress { stroke-dashoffset: calc(251.2 - (251.2 * var(--percent)) / 100); }
     .lang-card.active .circle-text { opacity: 1; transform: scale(1); }
     .lang-card.active .default-icon { opacity: 0; transform: scale(0.5); }
+
+    .line-stats-card .stat-line-wrapper { margin-bottom: 25px; }
+    .line-stats-card .stat-line-info { opacity: 1; max-height: 40px; margin-bottom: 8px; transform: translateY(0); }
+    .line-stats-card .hover-hint { display: none; }
 }
 
 /* --- Typing Effect --- */
@@ -454,14 +535,15 @@ body::before {
     position: fixed;
     top: 0; left: 0;
     width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(88, 101, 242, 0.15) 0%, transparent 60%);
+    background: radial-gradient(circle, rgba(88, 101, 242, 0.08) 0%, transparent 60%);
     border-radius: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) translate3d(0, 0, 0);
     pointer-events: none;
     z-index: 9998;
     mix-blend-mode: screen;
-    transition: opacity 0.3s;
+    transition: opacity 0.6s ease;
     opacity: 0;
+    will-change: transform, opacity;
 }
 body:hover .mouse-glow {
     opacity: 1;
@@ -473,8 +555,8 @@ body:hover .mouse-glow {
     bottom: 30px;
     right: 30px;
     background: rgba(15, 15, 25, 0.6);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--card-border);
     color: var(--text-muted);
     border-radius: 50%;
